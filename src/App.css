@@ -1,3 +1,12 @@
+:root {
+  --primary-color: #ff6600;
+  --background-color: #f6f6ef;
+  --text-color: #828282;
+  --link-color: #000000;
+  --loader-size-small: 15px;
+  --loader-size-large: 30px;
+}
+
 .App {
   text-align: center;
 }
@@ -23,7 +32,104 @@
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
+.app__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--primary-color);
+  padding: 10px;
+}
+
+.app__header--left {
+  display: flex;
+  align-items: center;
+}
+
+.app__header__logo {
+  height: 20px;
+  width: 20px;
+  border: 2px solid white;
+}
+
+.app__header__title {
+  margin-left: 10px;
+  font-weight: 800;
+}
+
+.app__stories__container__loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.app__stories__container {
+  margin: 0 auto;
+}
+
+.app__stories__story {
+  padding: 10px;
+}
+
+.app__stories__story__link {
+  color: var(--link-color);
+  font-size: 16px;
+}
+
+.app__stories__story__author {
+  color: var(--text-color);
+  margin: 5px 0 0 0;
+  font-size: 12px;
+}
+
+.app__loader {
+  border-radius: 50%;
+  border: 5px solid var(--background-color);
+  border-bottom-color: var(--primary-color);
+  animation: Spin 1s infinite linear;
+  box-shadow: 0px 0px 1px #000000;
+}
+
+.app__loader--small {
+  height: var(--loader-size-small);
+  width: var(--loader-size-small);
+}
+
+.app__loader--large {
+  height: var(--loader-size-large);
+  width: var(--loader-size-large);
+}
+
+.app__infinite-scroll {
+  position: relative;
+  max-height: calc(100vh - 65px);
+  overflow-y: scroll;
+  margin: 0 auto;
+  padding: 0 0 20px 0;
+}
+
+.app__infinite-scroll__footer__container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color);
+  font-size: 14px;
+  margin: 20px 0;
+}
+
+.app__infinite-scroll__footer__container__loader {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+}
+
+.text--ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@keyframes Spin {
   from {
     transform: rotate(0deg);
   }
