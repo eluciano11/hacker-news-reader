@@ -25,10 +25,14 @@ class App extends Component {
   handleLoadStoryById = async id => {
     try {
       const story = await axios.get(`${BASE_URL}/item/${id}.json`);
+      const stories =
+        story.data.type === "story"
+          ? [...this.state.stories, story.data]
+          : this.state.stories;
 
       this.setState({
         nextStory: this.state.nextStory + 1,
-        stories: [...this.state.stories, story.data]
+        stories
       });
     } catch (error) {
       // When an error ocurrs on an indiviual request we must move to the next story.
