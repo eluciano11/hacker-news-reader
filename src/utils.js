@@ -13,20 +13,37 @@ const MONTHS = {
   11: "December"
 };
 
+/**
+ * Format the provided date object to the following format:
+ * Month Day, Year Hours:Minutes
+ *
+ * @example August 2, 2019 3:00pm
+ *
+ * @param {Object} date - Date information.
+ * @return {string} Formatted date.
+ */
 function formatDate(date) {
-  const month = MONTHS[date.getMonth()];
-  const minutes =
-    date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
-  const hour =
-    date.getHours() - 12 > 0 ? date.getHours() - 12 : date.getHours();
-  const postfix =
-    date.getHours() - 12 >= 0 && Number(minutes) >= 0 ? "pm" : "am";
+  if (date) {
+    const month = MONTHS[date.getMonth()];
+    const minutes =
+      date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
+    const hour =
+      date.getHours() - 12 > 0 ? date.getHours() - 12 : date.getHours();
+    const postfix =
+      date.getHours() - 12 >= 0 && Number(minutes) >= 0 ? "pm" : "am";
 
-  return `${month} ${date.getDate()}, ${date.getFullYear()} ${hour}:${minutes}${postfix}`;
+    return `${month} ${date.getDate()}, ${date.getFullYear()} ${hour}:${minutes}${postfix}`;
+  }
+
+  return "";
 }
 
-function convertUnixTimestamp(timestamp) {
+/**
+ * Conver the provided unix timestamp to milliseconds
+ * @param {*} timestamp
+ */
+function convertToMilliseconds(timestamp = 0) {
   return timestamp * 1000;
 }
 
-export { formatDate, convertUnixTimestamp };
+export { formatDate, convertToMilliseconds };

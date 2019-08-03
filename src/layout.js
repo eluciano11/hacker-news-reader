@@ -1,6 +1,7 @@
 import React, { memo } from "react";
 import PropTypes from "prop-types";
 
+// Basic layout of the application.
 function Layout(props) {
   return (
     <main>
@@ -29,7 +30,8 @@ Layout.propTypes = {
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node
-  ]).isRequired
+  ]).isRequired,
+  isOnline: PropTypes.bool.isRequired
 };
 
 export default memo(Layout);

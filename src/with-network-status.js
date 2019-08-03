@@ -1,5 +1,12 @@
 import React, { PureComponent } from "react";
 
+/**
+ * Higher ordered component that will verify the network state of the
+ * system. When the network state changes the WrappedComponent will re-render and
+ * will receive an isOnline flag.
+ *
+ * @param {Object} WrappedComponent - Component to decorate.
+ */
 function withNetworkStatus(WrappedComponent) {
   return class extends PureComponent {
     state = {

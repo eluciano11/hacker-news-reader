@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 
-import { formatDate, convertUnixTimestamp } from "./utils";
+import { formatDate, convertToMilliseconds } from "./utils";
 import withNetworkStatus from "./with-network-status";
 import InfiniteScroll from "./infinite-scroll";
 import EmptyView from "./empty-view";
@@ -115,7 +115,7 @@ class App extends Component {
                 key={story.id}
                 title={story.title}
                 author={story.by}
-                date={formatDate(new Date(convertUnixTimestamp(story.time)))}
+                date={formatDate(new Date(convertToMilliseconds(story.time)))}
                 url={story.url}
               />
             ))}
