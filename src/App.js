@@ -4,6 +4,7 @@ import axios from "axios";
 import InfiniteScroll from "./infinite-scroll";
 import Layout from "./layout";
 import Loader from "./loader";
+import withNetworkStatus from "./with-network-status";
 import { formatDate } from "./utils";
 import Story from "./story";
 import "./App.css";
@@ -69,39 +70,36 @@ class App extends Component {
 
   render() {
     const { isLoading, stories, allStories } = this.state;
+    const { isOnline } = this.props;
 
-    if (isLoading) {
-      return (
-        <Layout>
+    return (
+      <Layout isOnline={isOnline}>
+        {isLoading ? (
           <div className="app__stories__container__loader">
             <Loader size="large" />
           </div>
-        </Layout>
-      );
-    }
-
-    return (
-      <Layout>
-        <section className="app__stories__container">
-          <InfiniteScroll
-            onLoadItem={this.handleLoadStory}
-            onLoadNext={this.handleLoadNextBatch}
-            hasMore={allStories.length !== stories.length}
-          >
-            {stories.map(story => (
-              <Story
-                key={story.id}
-                title={story.title}
-                author={story.by}
-                date={formatDate(new Date(story.time * 1000))}
-                url={story.url}
-              />
-            ))}
-          </InfiniteScroll>
-        </section>
+        ) : (
+          <section className="app__stories__container">
+            <InfiniteScroll
+              onLoadItem={this.handleLoadStory}
+              onLoadNext={this.handleLoadNextBatch}
+              hasMore={allStories.length !== stories.length}
+            >
+              {stories.map(story => (
+                <Story
+                  key={story.id}
+                  title={story.title}
+                  author={story.by}
+                  date={formatDate(new Date(story.time * 1000))}
+                  url={story.url}
+                />
+              ))}
+            </InfiniteScroll>
+          </section>
+        )}
       </Layout>
     );
   }
 }
 
-export default App;
+export default withNetworkStatus(App);

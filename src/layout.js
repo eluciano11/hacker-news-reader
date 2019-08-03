@@ -9,6 +9,16 @@ function Layout(props) {
           <img className="app__header__logo" src="./yc.png" alt="logo" />
           <div className="app__header__title">Hacker News Reader</div>
         </div>
+        <div className="app__header--left">
+          <img
+            className="app__header__network-state__icon"
+            src={`./${!props.isOnline ? "no-" : ""}wifi.svg`}
+            alt="wifi-icon"
+          />
+          <p className="app__header__network-state">
+            {props.isOnline ? "Online" : "Offline"}
+          </p>
+        </div>
       </header>
       {props.children}
     </main>

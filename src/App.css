@@ -51,6 +51,17 @@
   border: 2px solid white;
 }
 
+.app__header__network-state__icon {
+  height: 20px;
+  width: 20px;
+}
+
+.app__header__network-state {
+  color: white;
+  font-size: 12px;
+  margin: 0 0 0 5px;
+}
+
 .app__header__title {
   margin-left: 10px;
   font-weight: 800;

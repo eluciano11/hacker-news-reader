@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
 import throttle from "lodash.throttle";
 
@@ -8,7 +8,7 @@ const THROTTLE_TIMER = 1000;
 const FILL_PERCENT = 1.2;
 const SCROLL_PERCENT = 0.7;
 
-class InfiniteScroll extends Component {
+class InfiniteScroll extends PureComponent {
   constructor(props) {
     super(props);
 
