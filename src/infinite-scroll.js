@@ -1,5 +1,6 @@
 import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
+import debounce from "lodash.debounce";
 import throttle from "lodash.throttle";
 
 import Loader from "./loader";
@@ -12,6 +13,7 @@ class InfiniteScroll extends PureComponent {
   constructor(props) {
     super(props);
 
+    window.addEventListener("resize", this.handleResize);
     this.throttleScroll = throttle(this.handleScroll, this.props.throttleTimer);
   }
 
@@ -25,7 +27,18 @@ class InfiniteScroll extends PureComponent {
     this.fillScreen(this.node);
   }
 
-  fillScreen = async container => {
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.handleResize);
+  }
+
+  setRef = node => {
+    if (node) {
+      this.node = node;
+    }
+  };
+
+  fillScreen = async () => {
+    const container = this.node;
     const { fillPercent } = this.props;
     const scrollHeight = container.scrollHeight;
     const windowHeight = window.innerHeight;
@@ -38,14 +51,10 @@ class InfiniteScroll extends PureComponent {
     const { onLoadItem } = this.props;
 
     await onLoadItem();
-    this.fillScreen(container);
+    this.fillScreen();
   };
 
-  setRef = node => {
-    if (node) {
-      this.node = node;
-    }
-  };
+  handleResize = debounce(this.fillScreen, 500);
 
   handleScroll = async () => {
     const { isLoading } = this.state;
