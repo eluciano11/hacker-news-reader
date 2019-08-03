@@ -32,6 +32,21 @@
   color: #61dafb;
 }
 
+.text-center {
+  text-align: center;
+}
+
+.app__empty-view__emoji {
+  font-size: 45px;
+  margin: 0 0 20px 0;
+}
+
+.app__empty-view__title {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0 0 10px 0;
+}
+
 .app__header {
   display: flex;
   align-items: center;
@@ -67,15 +82,11 @@
   font-weight: 800;
 }
 
-.app__stories__container__loader {
+.app__stories__container {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;
-}
-
-.app__stories__container {
-  margin: 0 auto;
 }
 
 .app__stories__story {
