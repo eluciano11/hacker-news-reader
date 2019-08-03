@@ -25,4 +25,8 @@ function formatDate(date) {
   return `${month} ${date.getDate()}, ${date.getFullYear()} ${hour}:${minutes}${postfix}`;
 }
 
-export { formatDate };
+function convertUnixTimestamp(timestamp) {
+  return timestamp * 1000;
+}
+
+export { formatDate, convertUnixTimestamp };

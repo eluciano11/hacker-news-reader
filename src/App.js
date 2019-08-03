@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import axios from "axios";
 
+import { formatDate, convertUnixTimestamp } from "./utils";
+import withNetworkStatus from "./with-network-status";
 import InfiniteScroll from "./infinite-scroll";
+import EmptyView from "./empty-view";
 import Layout from "./layout";
 import Loader from "./loader";
-import withNetworkStatus from "./with-network-status";
-import EmptyView from "./empty-view";
-import { formatDate } from "./utils";
 import Story from "./story";
 import "./App.css";
 
@@ -17,32 +17,11 @@ class App extends Component {
   state = {
     isLoading: true,
     hasError: false,
-    nextStory: 0,
     stories: [],
     allStories: []
   };
 
-  handleLoadStoryById = async id => {
-    try {
-      const story = await axios.get(`${BASE_URL}/item/${id}.json`);
-      const stories =
-        story.data.type === "story"
-          ? [...this.state.stories, story.data]
-          : this.state.stories;
-
-      this.setState({
-        nextStory: this.state.nextStory + 1,
-        stories
-      });
-    } catch (error) {
-      // When an error ocurrs on an indiviual request we must move to the next story.
-      this.setState({
-        nextStory: this.state.nextStory + 1
-      });
-
-      console.log(`Error while loading individual story ${id}`, error);
-    }
-  };
+  nextStory = 0;
 
   async componentDidMount() {
     try {
@@ -56,18 +35,49 @@ class App extends Component {
     }
   }
 
-  handleLoadStory = async () => {
-    const { allStories, nextStory } = this.state;
+  /**
+   * Fetch the data for the provided id, verify that the item received is a story and
+   * update the list of stories.
+   *
+   * @param {number} id - Identity of the story to be loaded.
+   */
+  handleLoadStoryById = async id => {
+    this.nextStory = this.nextStory + 1;
 
-    await this.handleLoadStoryById(allStories[nextStory]);
+    try {
+      const story = await axios.get(`${BASE_URL}/item/${id}.json`);
+      const stories =
+        story.data.type === "story"
+          ? [...this.state.stories, story.data]
+          : this.state.stories;
+
+      this.setState({
+        stories
+      });
+    } catch (error) {
+      console.log(`Error while loading individual story ${id}`, error);
+    }
   };
 
-  handleLoadNextBatch = async () => {
-    const { nextStory, allStories } = this.state;
-    const nextBatch = nextStory + ITEMS_PER_PAGE;
-    const limit = nextBatch > allStories.length ? allStories.length : nextBatch;
+  /**
+   * Fetch the next story from the list of stories.
+   */
+  handleLoadStory = async () => {
+    const { allStories } = this.state;
 
-    for (let index = nextStory; index < limit; index++) {
+    await this.handleLoadStoryById(allStories[this.nextStory]);
+  };
+
+  /**
+   * Fetch a batch of stories from the the Hacker News API.
+   */
+  handleLoadNextBatch = async () => {
+    const { allStories } = this.state;
+    const nextBatchSize = this.nextStory + ITEMS_PER_PAGE;
+    const limit =
+      nextBatchSize > allStories.length ? allStories.length : nextBatchSize;
+
+    for (let index = this.nextStory; index < limit; index++) {
       await this.handleLoadStoryById(allStories[index]);
     }
   };
@@ -105,7 +115,7 @@ class App extends Component {
                 key={story.id}
                 title={story.title}
                 author={story.by}
-                date={formatDate(new Date(story.time * 1000))}
+                date={formatDate(new Date(convertUnixTimestamp(story.time)))}
                 url={story.url}
               />
             ))}
