@@ -8,7 +8,7 @@ import { Loader } from "../loader/index";
 
 const THROTTLE_TIMER = 1000;
 const FILL_PERCENT = 1.2;
-const SCROLL_PERCENT = 0.7;
+const SCROLL_PERCENT = 0.75;
 
 /**
  * This component will handle the infinite scroll functionality. It's also
@@ -22,7 +22,7 @@ class InfiniteScroll extends PureComponent {
     super(props);
 
     window.addEventListener("resize", this.handleResize);
-    this.throttleScroll = throttle(this.handleScroll, this.props.throttleTimer);
+    this.throttleScroll = throttle(this.handleScroll, props.scrollTriggerDelay);
   }
 
   state = {
@@ -148,13 +148,13 @@ InfiniteScroll.propTypes = {
   // Scrolling percentage that will trigger a batch load.
   scrollPercent: PropTypes.number,
   // Delay that will be used on the scroll event.
-  throttleTimer: PropTypes.number
+  scrollTriggerDelay: PropTypes.number
 };
 
 InfiniteScroll.defaultProps = {
   fillPercent: FILL_PERCENT,
   scrollPercent: SCROLL_PERCENT,
-  throttleTimer: THROTTLE_TIMER,
+  scrollTriggerDelay: THROTTLE_TIMER,
   hasMore: false
 };
 
