@@ -26,10 +26,11 @@ class App extends Component {
   nextStory = 0;
 
   async componentDidMount() {
+    console.log("hey from component");
     try {
       const resp = await axios.get(`${BASE_URL}/newstories.json`);
 
-      this.setState({ isLoading: false, allStories: resp.data });
+      this.setState({ isLoading: false, allStories: resp.data || [] });
     } catch (error) {
       this.setState({ isLoading: false, allStories: [], hasError: true });
 
@@ -91,15 +92,15 @@ class App extends Component {
     return (
       <Layout isOnline={isOnline}>
         {isLoading ? (
-          <div className={styles.container}>
+          <div className={styles.container} data-testid="loading">
             <Loader size="large" />
           </div>
         ) : !isLoading && allStories.length === 0 && !hasError ? (
-          <div className={styles.container}>
+          <div className={styles.container} data-testid="empty">
             <EmptyView title="No stories to show at this moment." />
           </div>
         ) : !isLoading && hasError ? (
-          <div className={styles.container}>
+          <div className={styles.container} data-testid="error">
             <EmptyView
               title="An error occurred while loading your data."
               subtitle="Click here to refresh."
@@ -111,6 +112,7 @@ class App extends Component {
             onLoadItem={this.handleLoadStory}
             onLoadNext={this.handleLoadNextBatch}
             hasMore={allStories.length !== stories.length}
+            data-testid="resolved"
           >
             {stories.map(story => (
               <Story
