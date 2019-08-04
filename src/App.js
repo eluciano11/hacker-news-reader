@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 
-import { formatDate, convertToMilliseconds } from "./utils";
+import { formatDate, convertToMilliseconds } from "./utils/index";
 import withNetworkStatus from "./with-network-status";
 import {
   InfiniteScroll,
