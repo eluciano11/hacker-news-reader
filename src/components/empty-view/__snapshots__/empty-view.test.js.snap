@@ -1,0 +1,68 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Empty View Component Tests Should render empty view with links 1`] = `
+<DocumentFragment>
+  <div
+    class="app__text--center"
+  >
+    <span
+      aria-label="emoji"
+      class="emoji"
+      role="img"
+    >
+      😔
+    </span>
+    <h3
+      class="title app__text--center"
+    >
+      Empty view test
+    </h3>
+    <a
+      class="app__link"
+      href="https://hackernews.com"
+    >
+      Subtitle test
+    </a>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Empty View Component Tests Should render empty view without content 1`] = `
+<DocumentFragment>
+  <div
+    class="app__text--center"
+  >
+    <span
+      aria-label="emoji"
+      class="emoji"
+      role="img"
+    >
+      😔
+    </span>
+    <h3
+      class="title app__text--center"
+    />
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Empty View Component Tests Should render empty view without links 1`] = `
+<DocumentFragment>
+  <div
+    class="app__text--center"
+  >
+    <span
+      aria-label="emoji"
+      class="emoji"
+      role="img"
+    >
+      😔
+    </span>
+    <h3
+      class="title app__text--center"
+    >
+      Empty view test
+    </h3>
+  </div>
+</DocumentFragment>
+`;

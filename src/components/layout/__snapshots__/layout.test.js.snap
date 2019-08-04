@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Layout Component Tests Should render layout with offline mode 1`] = `
+<DocumentFragment>
+  <main>
+    <header
+      class="header"
+    >
+      <div
+        class="container"
+      >
+        <img
+          alt="logo"
+          class="logo"
+          src="./yc.png"
+        />
+        <div
+          class="title"
+        >
+          Hacker News Reader
+        </div>
+      </div>
+      <div
+        class="container"
+      >
+        <img
+          alt="wifi-icon"
+          class="networkStateIcon"
+          src="./no-wifi.svg"
+        />
+        <p
+          class="networkState"
+        >
+          Offline
+        </p>
+      </div>
+    </header>
+    Layout test
+  </main>
+</DocumentFragment>
+`;
+
+exports[`Layout Component Tests Should render layout with online mode 1`] = `
+<DocumentFragment>
+  <main>
+    <header
+      class="header"
+    >
+      <div
+        class="container"
+      >
+        <img
+          alt="logo"
+          class="logo"
+          src="./yc.png"
+        />
+        <div
+          class="title"
+        >
+          Hacker News Reader
+        </div>
+      </div>
+      <div
+        class="container"
+      >
+        <img
+          alt="wifi-icon"
+          class="networkStateIcon"
+          src="./wifi.svg"
+        />
+        <p
+          class="networkState"
+        >
+          Online
+        </p>
+      </div>
+    </header>
+    Layout test
+  </main>
+</DocumentFragment>
+`;

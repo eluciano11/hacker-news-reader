@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Story Component Tests Should render empty story 1`] = `
+<DocumentFragment>
+  <li
+    class="story app__text--ellipsis"
+  >
+    <a
+      class="app__link"
+      href="/"
+      rel="noopener noreferrer"
+      target="_blank"
+    />
+    <p
+      class="author"
+    >
+       | 
+      <time
+        class="author"
+      />
+    </p>
+  </li>
+</DocumentFragment>
+`;
+
+exports[`Story Component Tests Should render story with data 1`] = `
+<DocumentFragment>
+  <li
+    class="story app__text--ellipsis"
+  >
+    <a
+      class="app__link"
+      href="https://www.hackernews.com"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      Title
+    </a>
+    <p
+      class="author"
+    >
+      Author | 
+      <time
+        class="author"
+      >
+        August 1, 2019 1:00pm
+      </time>
+    </p>
+  </li>
+</DocumentFragment>
+`;

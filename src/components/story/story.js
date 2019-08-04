@@ -31,7 +31,7 @@ Story.propTypes = {
 Story.defaultProps = {
   title: "",
   author: "",
-  url: "",
+  url: "/",
   date: ""
 };
 
