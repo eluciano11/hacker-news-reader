@@ -112,6 +112,7 @@ class App extends Component {
               onLoadItem={this.handleLoadStory}
               onLoadNext={this.handleLoadNextBatch}
               hasMore={allStories.length !== stories.length}
+              isOnline={isOnline}
             >
               {stories.map((story, index) => (
                 <Story

@@ -35,6 +35,13 @@ class InfiniteScroll extends PureComponent {
     this.fillScreen(this.node);
   }
 
+  componentDidUpdate(prevProps) {
+    if (!prevProps.isOnline && this.props.isOnline) {
+      // Reset scroll position after the user is back online.
+      this.lastScroll = 0;
+    }
+  }
+
   componentWillUnmount() {
     window.removeEventListener("resize", this.handleResize);
   }
@@ -104,9 +111,20 @@ class InfiniteScroll extends PureComponent {
     }
   };
 
+  handleRetry = () => {
+    const { isOnline, onLoadNext } = this.props;
+
+    if (isOnline) {
+      this.setState({ isLoading: true, hasRetried: true }, async () => {
+        await onLoadNext();
+        this.setState({ isLoading: false, hasRetried: false });
+      });
+    }
+  };
+
   render() {
     const { isLoading } = this.state;
-    const { children, hasMore } = this.props;
+    const { children, hasMore, isOnline } = this.props;
 
     return (
       <>
@@ -116,6 +134,15 @@ class InfiniteScroll extends PureComponent {
           onScroll={this.throttleScroll}
         >
           {children}
+          {!hasMore && (
+            <li className={styles.container}>No more stories to load</li>
+          )}
+          {!isOnline && (
+            <li className={styles.container}>
+              Looks like you lost your connection. Please check it and try
+              again.
+            </li>
+          )}
         </ul>
         {isLoading && (
           <div className={styles.container}>
@@ -123,9 +150,6 @@ class InfiniteScroll extends PureComponent {
               <Loader />
             </div>
           </div>
-        )}
-        {!hasMore && (
-          <div className={styles.container}>No more stories to load</div>
         )}
       </>
     );
