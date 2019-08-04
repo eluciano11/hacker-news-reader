@@ -1,0 +1,22 @@
+.infiniteScroll {
+  position: relative;
+  max-height: calc(100vh - 65px);
+  overflow-y: scroll;
+  margin: 0 auto;
+  padding: 0 0 20px 0;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color);
+  font-size: 14px;
+  margin: 20px 0;
+}
+
+.loader {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+}

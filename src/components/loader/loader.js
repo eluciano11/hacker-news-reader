@@ -1,11 +1,13 @@
 import React, { memo } from "react";
 import PropTypes from "prop-types";
 
+import styles from "./loader.module.css";
+
 function Loader(props) {
   return (
     <div
-      className={`app__loader app__loader--${
-        props.size === "large" ? "large" : "small"
+      className={`${styles.loader} ${
+        props.size === "large" ? styles.large : styles.small
       }`}
     />
   );

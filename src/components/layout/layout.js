@@ -1,22 +1,24 @@
 import React, { memo } from "react";
 import PropTypes from "prop-types";
 
+import styles from "./layout.module.css";
+
 // Basic layout of the application.
 function Layout(props) {
   return (
     <main>
-      <header className="app__header">
-        <div className="app__header--left">
-          <img className="app__header__logo" src="./yc.png" alt="logo" />
-          <div className="app__header__title">Hacker News Reader</div>
+      <header className={styles.header}>
+        <div className={styles.container}>
+          <img className={styles.logo} src="./yc.png" alt="logo" />
+          <div className={styles.title}>Hacker News Reader</div>
         </div>
-        <div className="app__header--left">
+        <div className={styles.container}>
           <img
-            className="app__header__network-state__icon"
+            className={styles.networkStateIcon}
             src={`./${!props.isOnline ? "no-" : ""}wifi.svg`}
             alt="wifi-icon"
           />
-          <p className="app__header__network-state">
+          <p className={styles.networkState}>
             {props.isOnline ? "Online" : "Offline"}
           </p>
         </div>

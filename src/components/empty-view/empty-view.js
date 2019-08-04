@@ -1,15 +1,17 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+import styles from "./empty-view.module.css";
+
 function EmptyView(props) {
   return (
-    <div className="text-center">
-      <span className="app__empty-view__emoji" role="img" aria-label="emoji">
+    <div className="app__text--center">
+      <span className={styles.emoji} role="img" aria-label="emoji">
         {props.emoji}
       </span>
-      <h3 className="app__empty-view__title text-center">{props.title}</h3>
+      <h3 className={`${styles.title} app__text--center`}>{props.title}</h3>
       {props.subtitle && props.url && (
-        <a className="app__stories__story__link" href={props.url}>
+        <a className="app__link" href={props.url}>
           {props.subtitle}
         </a>
       )}

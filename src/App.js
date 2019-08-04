@@ -3,12 +3,14 @@ import axios from "axios";
 
 import { formatDate, convertToMilliseconds } from "./utils";
 import withNetworkStatus from "./with-network-status";
-import InfiniteScroll from "./infinite-scroll";
-import EmptyView from "./empty-view";
-import Layout from "./layout";
-import Loader from "./loader";
-import Story from "./story";
-import "./App.css";
+import {
+  InfiniteScroll,
+  EmptyView,
+  Layout,
+  Loader,
+  Story
+} from "./components/index";
+import styles from "./app.module.css";
 
 const ITEMS_PER_PAGE = 10;
 const BASE_URL = "https://hacker-news.firebaseio.com/v0";
@@ -89,15 +91,15 @@ class App extends Component {
     return (
       <Layout isOnline={isOnline}>
         {isLoading ? (
-          <div className="app__stories__container">
+          <div className={styles.container}>
             <Loader size="large" />
           </div>
         ) : !isLoading && allStories.length === 0 && !hasError ? (
-          <div className="app__stories__container">
+          <div className={styles.container}>
             <EmptyView title="No stories to show at this moment." />
           </div>
         ) : !isLoading && hasError ? (
-          <div className="app__stories__container">
+          <div className={styles.container}>
             <EmptyView
               title="An error occurred while loading your data."
               subtitle="Click here to refresh."

@@ -3,7 +3,8 @@ import PropTypes from "prop-types";
 import debounce from "lodash.debounce";
 import throttle from "lodash.throttle";
 
-import Loader from "./loader";
+import styles from "./infinite-scroll.module.css";
+import { Loader } from "../loader/index";
 
 const THROTTLE_TIMER = 1000;
 const FILL_PERCENT = 1.2;
@@ -110,23 +111,21 @@ class InfiniteScroll extends PureComponent {
     return (
       <>
         <ul
-          className="app__infinite-scroll"
+          className={styles.infiniteScroll}
           ref={this.setRef}
           onScroll={this.throttleScroll}
         >
           {children}
         </ul>
         {isLoading && (
-          <div className="app__infinite-scroll__footer__container">
-            <div className="app__infinite-scroll__footer__container__loader">
+          <div className={styles.container}>
+            <div className={styles.loader}>
               <Loader />
             </div>
           </div>
         )}
         {!hasMore && (
-          <div className="app__infinite-scroll__footer__container">
-            No more stories to load
-          </div>
+          <div className={styles.container}>No more stories to load</div>
         )}
       </>
     );

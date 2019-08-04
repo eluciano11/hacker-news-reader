@@ -1,19 +1,21 @@
 import React, { memo } from "react";
 import PropTypes from "prop-types";
 
+import styles from "./story.module.css";
+
 function Story({ title, author, date, url }) {
   return (
-    <li className="app__stories__story text--ellipsis">
+    <li className={`${styles.story} app__text--ellipsis`}>
       <a
-        className="app__stories__story__link"
+        className="app__link"
         href={url}
         target="_blank"
         rel="noopener noreferrer"
       >
         {title}
       </a>
-      <p className="app__stories__story__author">
-        {author} | <time className="app__stories__story__author">{date}</time>
+      <p className={styles.author}>
+        {author} | <time className={styles.author}>{date}</time>
       </p>
     </li>
   );
