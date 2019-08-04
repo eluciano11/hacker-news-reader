@@ -26,7 +26,6 @@ class App extends Component {
   nextStory = 0;
 
   async componentDidMount() {
-    console.log("hey from component");
     try {
       const resp = await axios.get(`${BASE_URL}/newstories.json`);
 
@@ -92,38 +91,39 @@ class App extends Component {
     return (
       <Layout isOnline={isOnline}>
         {isLoading ? (
-          <div className={styles.container} data-testid="loading">
+          <section className={styles.container} data-testid="loading">
             <Loader size="large" />
-          </div>
-        ) : !isLoading && allStories.length === 0 && !hasError ? (
-          <div className={styles.container} data-testid="empty">
+          </section>
+        ) : allStories.length === 0 && !hasError ? (
+          <section className={styles.container} data-testid="empty">
             <EmptyView title="No stories to show at this moment." />
-          </div>
+          </section>
         ) : !isLoading && hasError ? (
-          <div className={styles.container} data-testid="error">
+          <section className={styles.container} data-testid="error">
             <EmptyView
               title="An error occurred while loading your data."
               subtitle="Click here to refresh."
               url="/"
             />
-          </div>
+          </section>
         ) : (
-          <InfiniteScroll
-            onLoadItem={this.handleLoadStory}
-            onLoadNext={this.handleLoadNextBatch}
-            hasMore={allStories.length !== stories.length}
-            data-testid="resolved"
-          >
-            {stories.map(story => (
-              <Story
-                key={story.id}
-                title={story.title}
-                author={story.by}
-                date={formatDate(new Date(convertToMilliseconds(story.time)))}
-                url={story.url}
-              />
-            ))}
-          </InfiniteScroll>
+          <section data-testid="resolved">
+            <InfiniteScroll
+              onLoadItem={this.handleLoadStory}
+              onLoadNext={this.handleLoadNextBatch}
+              hasMore={allStories.length !== stories.length}
+            >
+              {stories.map((story, index) => (
+                <Story
+                  key={`story-${index}`}
+                  title={story.title}
+                  author={story.by}
+                  date={formatDate(new Date(convertToMilliseconds(story.time)))}
+                  url={story.url}
+                />
+              ))}
+            </InfiniteScroll>
+          </section>
         )}
       </Layout>
     );
