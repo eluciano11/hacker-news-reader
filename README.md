@@ -10,8 +10,8 @@ A demo is available [here](https://xenodochial-lamarr-5f16b2.netlify.com).
 
 ## Available Scripts
 
-In order to use any of the following scripts you'll need to run `npm install` before.
-In the project directory, you can run:
+In order to use any of the following scripts you'll need to run `npm install` in the project directory.<br>
+Once you've installed all of the dependencies you can run:
 
 ### `npm start`
 
