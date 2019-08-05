@@ -1,8 +1,7 @@
 /**
- * Format the provided date object to the following format:
- * Month Day, Year Hours:Minutes
+ * Format the provided date object using the locale of the browser.
  *
- * @example August 2, 2019 3:00pm
+ * @example August 2, 2019, 3:00pm
  *
  * @param {Object} date - Date information.
  * @return {string} Formatted date.

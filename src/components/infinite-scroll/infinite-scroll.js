@@ -95,30 +95,19 @@ class InfiniteScroll extends PureComponent {
     const scrollTop = this.node.scrollTop;
     const isScrollingDown = scrollTop > this.lastScroll;
 
-    if (hasMore && isScrollingDown) {
+    if (hasMore && isScrollingDown && !isLoading) {
       this.lastScroll = scrollTop;
       const clientHeight = this.node.getBoundingClientRect().height;
       const scrollHeight = this.node.scrollHeight;
       const percentTrigger = (scrollTop + clientHeight) / scrollHeight;
       const { scrollPercent } = this.props;
 
-      if (percentTrigger > scrollPercent && !isLoading) {
+      if (percentTrigger > scrollPercent) {
         this.setState({ isLoading: true }, async () => {
           await onLoadNext();
           this.setState({ isLoading: false });
         });
       }
-    }
-  };
-
-  handleRetry = () => {
-    const { isOnline, onLoadNext } = this.props;
-
-    if (isOnline) {
-      this.setState({ isLoading: true, hasRetried: true }, async () => {
-        await onLoadNext();
-        this.setState({ isLoading: false, hasRetried: false });
-      });
     }
   };
 

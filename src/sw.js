@@ -3,7 +3,7 @@ self.addEventListener("activate", event =>
   event.waitUntil(self.clients.claim())
 );
 
-// Prefetch javascript bundles, static images and svgs.
+// Prefetch and cache the javascript bundles, static images and svgs.
 workbox.precaching.precacheAndRoute(self.__precacheManifest);
 workbox.precaching.precacheAndRoute([
   { url: "/yc.png" },
