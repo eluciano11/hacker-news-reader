@@ -1,10 +1,10 @@
-import React, { PureComponent } from "react";
-import PropTypes from "prop-types";
-import debounce from "lodash.debounce";
-import throttle from "lodash.throttle";
+import React, { memo, useEffect, useRef, useCallback } from 'react';
+import PropTypes from 'prop-types';
+import debounce from 'lodash.debounce';
+import throttle from 'lodash.throttle';
 
-import styles from "./infinite-scroll.module.css";
-import { Loader } from "../loader/index";
+import styles from './infinite-scroll.module.css';
+import { Loader } from '../loader/index';
 
 const THROTTLE_TIMER = 1000;
 const FILL_PERCENT = 1.2;
@@ -17,132 +17,90 @@ const SCROLL_PERCENT = 0.75;
  * render and on any window resize.
  */
 
-class InfiniteScroll extends PureComponent {
-  constructor(props) {
-    super(props);
+function InfiniteScroll(props) {
+  const {
+    fillPercent,
+    onLoadItem,
+    isOnline,
+    scrollTriggerDelay,
+    scrollPercent,
+    onLoadNext,
+    hasMore,
+    isLoading,
+    children
+  } = props;
+  const node = useRef(null);
+  const lastScroll = useRef(0);
+  const handleFillScreen = useCallback(() => {
+    const fillScreen = async () => {
+      const scrollHeight = node.current.scrollHeight;
+      const windowHeight = window.innerHeight;
+      const filledPercent = scrollHeight / windowHeight;
 
-    window.addEventListener("resize", this.handleResize);
-    this.throttleScroll = throttle(this.handleScroll, props.scrollTriggerDelay);
-  }
-
-  state = {
-    isLoading: false
-  };
-  node = null;
-  lastScroll = 0;
-
-  componentDidMount() {
-    this.fillScreen(this.node);
-  }
-
-  componentDidUpdate(prevProps) {
-    if (!prevProps.isOnline && this.props.isOnline) {
-      // Reset scroll position after the user is back online.
-      this.lastScroll = 0;
-    }
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.handleResize);
-  }
-
-  setRef = node => {
-    if (node) {
-      this.node = node;
-    }
-  };
-
-  /**
-   * Recursive function that will load a single story until the screen is filled
-   * with data. The fill percent can be edited by changing the prop that's sent
-   * to the component.
-   */
-  fillScreen = async () => {
-    const container = this.node;
-    const { fillPercent } = this.props;
-    const scrollHeight = container.scrollHeight;
-    const windowHeight = window.innerHeight;
-    const filledPercent = scrollHeight / windowHeight;
-
-    if (filledPercent >= fillPercent) {
-      return;
-    }
-
-    const { onLoadItem } = this.props;
-
-    await onLoadItem();
-    this.fillScreen();
-  };
-
-  /**
-   * Debounced callback to verify if the screen needs more data after a resize.
-   * The debounce will make sure that the resize function is call 500ms after
-   * the user has resized the window.
-   */
-  handleResize = debounce(this.fillScreen, 500);
-
-  /**
-   * Callback to verify if we need to load a batch of stories from the API.
-   * We will load more data when:
-   * 1. The user is scrolling down.
-   * 2. While there's more data to load.
-   * 3. While we are not loading data.
-   * 4. The user has passed the percentage trigger. The percentage trigger can be edited via props.
-   */
-  handleScroll = async () => {
-    const { isLoading } = this.state;
-    const { onLoadNext, hasMore } = this.props;
-    const scrollTop = this.node.scrollTop;
-    const isScrollingDown = scrollTop > this.lastScroll;
-
-    if (hasMore && isScrollingDown && !isLoading) {
-      this.lastScroll = scrollTop;
-      const clientHeight = this.node.getBoundingClientRect().height;
-      const scrollHeight = this.node.scrollHeight;
-      const percentTrigger = (scrollTop + clientHeight) / scrollHeight;
-      const { scrollPercent } = this.props;
-
-      if (percentTrigger > scrollPercent) {
-        this.setState({ isLoading: true }, async () => {
-          await onLoadNext();
-          this.setState({ isLoading: false });
-        });
+      if (filledPercent >= fillPercent) {
+        return;
       }
-    }
-  };
 
-  render() {
-    const { isLoading } = this.state;
-    const { children, hasMore, isOnline } = this.props;
+      await onLoadItem();
+      fillScreen();
+    };
 
-    return (
-      <>
-        <ul
-          className={styles.infiniteScroll}
-          ref={this.setRef}
-          onScroll={this.throttleScroll}
-        >
-          {children}
-          {!hasMore && (
-            <li className={styles.container}>No more stories to load</li>
-          )}
-          {!isOnline && (
-            <li className={styles.container}>
-              Looks like you lost your connection. Please check it and try
-              again.
-            </li>
-          )}
-        </ul>
-        {isLoading && (
-          <div className={styles.container}>
-            <div className={styles.loader}>
-              <Loader />
-            </div>
-          </div>
+    return fillScreen();
+  }, [fillPercent, onLoadItem]);
+  const handleScroll = useCallback(
+    throttle(async () => {
+      const scrollTop = node.current.scrollTop;
+      const isScrollingDown = scrollTop > lastScroll.current;
+
+      if (hasMore && isScrollingDown && !isLoading) {
+        lastScroll.current = scrollTop;
+        const clientHeight = node.current.getBoundingClientRect().height;
+        const scrollHeight = node.current.scrollHeight;
+        const percentTrigger = (scrollTop + clientHeight) / scrollHeight;
+
+        if (percentTrigger > scrollPercent) {
+          await onLoadNext();
+        }
+      }
+    }, scrollTriggerDelay),
+    [scrollTriggerDelay, isLoading, scrollPercent, onLoadNext, hasMore]
+  );
+
+  useEffect(() => {
+    const handleResize = debounce(handleFillScreen, 500);
+
+    window.addEventListener('resize', handleResize);
+    handleFillScreen();
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, [handleFillScreen]);
+
+  useEffect(() => {
+    lastScroll.current = 0;
+  }, [isOnline]);
+
+  return (
+    <>
+      <ul className={styles.infiniteScroll} ref={node} onScroll={handleScroll}>
+        {children}
+        {!hasMore && (
+          <li className={styles.container}>No more stories to load</li>
         )}
-      </>
-    );
-  }
+        {!isOnline && (
+          <li className={styles.container}>
+            Looks like you lost your connection. Please check it and try again.
+          </li>
+        )}
+      </ul>
+      {isLoading && (
+        <div className={styles.container}>
+          <div className={styles.loader}>
+            <Loader />
+          </div>
+        </div>
+      )}
+    </>
+  );
 }
 
 InfiniteScroll.propTypes = {
@@ -171,4 +129,4 @@ InfiniteScroll.defaultProps = {
   hasMore: false
 };
 
-export default InfiniteScroll;
+export default memo(InfiniteScroll);

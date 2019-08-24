@@ -1,19 +1,19 @@
-import React, { Component } from "react";
-import axios from "axios";
+import React, { Component } from 'react';
+import axios from 'axios';
 
-import { formatDate, convertToMilliseconds } from "./utils/index";
-import withNetworkStatus from "./with-network-status";
+import { formatDate, convertToMilliseconds } from './utils/index';
+import withNetworkStatus from './with-network-status';
 import {
   InfiniteScroll,
   EmptyView,
   Layout,
   Loader,
   Story
-} from "./components/index";
-import styles from "./app.module.css";
+} from './components/index';
+import styles from './app.module.css';
 
 const ITEMS_PER_PAGE = 10;
-const BASE_URL = "https://hacker-news.firebaseio.com/v0";
+const BASE_URL = 'https://hacker-news.firebaseio.com/v0';
 
 class App extends Component {
   state = {
@@ -33,7 +33,7 @@ class App extends Component {
     } catch (error) {
       this.setState({ isLoading: false, allStories: [], hasError: true });
 
-      console.log("Error while loading data from newstories", error);
+      console.log('Error while loading data from newstories', error);
     }
   }
 
@@ -49,7 +49,7 @@ class App extends Component {
     try {
       const story = await axios.get(`${BASE_URL}/item/${id}.json`);
       const stories =
-        story.data.type === "story"
+        story.data.type === 'story'
           ? [...this.state.stories, story.data]
           : this.state.stories;
 
@@ -79,9 +79,13 @@ class App extends Component {
     const limit =
       nextBatchSize > allStories.length ? allStories.length : nextBatchSize;
 
-    for (let index = this.nextStory; index < limit; index++) {
-      await this.handleLoadStoryById(allStories[index]);
-    }
+    this.setState({ isLoading: true }, async () => {
+      for (let index = this.nextStory; index < limit; index++) {
+        await this.handleLoadStoryById(allStories[index]);
+      }
+
+      this.setState({ isLoading: false });
+    });
   };
 
   render() {
@@ -90,7 +94,7 @@ class App extends Component {
 
     return (
       <Layout isOnline={isOnline}>
-        {isLoading ? (
+        {isLoading && allStories.length === 0 ? (
           <section className={styles.container} data-testid="loading">
             <Loader size="large" />
           </section>
@@ -113,6 +117,7 @@ class App extends Component {
               onLoadNext={this.handleLoadNextBatch}
               hasMore={allStories.length !== stories.length}
               isOnline={isOnline}
+              isLoading={isLoading && allStories.length > 0}
             >
               {stories.map((story, index) => (
                 <Story
