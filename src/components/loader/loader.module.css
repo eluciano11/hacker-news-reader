@@ -1,6 +1,6 @@
 .loader {
   border-radius: 50%;
-  border: 5px solid var(--background-color);
+  border: 5px solid var(--placeholder-color);
   border-bottom-color: var(--primary-color);
   animation: Spin 1s infinite linear;
   box-shadow: 0px 0px 1px #000000;

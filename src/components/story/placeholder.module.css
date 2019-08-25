@@ -1,0 +1,28 @@
+.title {
+  height: 18px;
+  background: var(--placeholder-color);
+}
+
+.authorContainer {
+  display: flex;
+  align-items: center;
+  margin: 5px 0 0 0;
+}
+
+.author {
+  display: inline-block;
+  background: var(--placeholder-color);
+  height: 15px;
+}
+
+.separator {
+  color: var(--placeholder-color);
+  margin: 0 5px;
+}
+
+.date {
+  display: inline-block;
+  background: var(--placeholder-color);
+  height: 15px;
+  width: 80px;
+}
