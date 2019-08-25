@@ -31,22 +31,6 @@ function InfiniteScroll(props) {
   } = props;
   const node = useRef(null);
   const lastScroll = useRef(0);
-  const handleFillScreen = useCallback(() => {
-    const fillScreen = async () => {
-      const scrollHeight = node.current.scrollHeight;
-      const windowHeight = window.innerHeight;
-      const filledPercent = scrollHeight / windowHeight;
-
-      if (filledPercent >= fillPercent) {
-        return;
-      }
-
-      await onLoadItem();
-      fillScreen();
-    };
-
-    return fillScreen();
-  }, [fillPercent, onLoadItem]);
   const handleScroll = useCallback(
     throttle(async () => {
       const scrollTop = node.current.scrollTop;
@@ -59,7 +43,7 @@ function InfiniteScroll(props) {
         const percentTrigger = (scrollTop + clientHeight) / scrollHeight;
 
         if (percentTrigger > scrollPercent) {
-          await onLoadNext();
+          onLoadNext();
         }
       }
     }, scrollTriggerDelay),
@@ -67,13 +51,26 @@ function InfiniteScroll(props) {
   );
 
   useEffect(() => {
-    const handleResize = debounce(handleFillScreen, 500);
+    // Load each story one by one until the screen is filled.
+    const fillScreen = async () => {
+      const scrollHeight = node.current.scrollHeight;
+      const windowHeight = window.innerHeight;
+      const filledPercent = scrollHeight / windowHeight;
+
+      if (filledPercent >= fillPercent) {
+        return;
+      }
+
+      await onLoadItem();
+      fillScreen();
+    };
+    const handleResize = debounce(fillScreen, 500);
 
     window.addEventListener('resize', handleResize);
-    handleFillScreen();
+    fillScreen();
 
     return () => window.removeEventListener('resize', handleResize);
-  }, [handleFillScreen]);
+  }, [fillPercent, onLoadItem]);
 
   useEffect(() => {
     lastScroll.current = 0;

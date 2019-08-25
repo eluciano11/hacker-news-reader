@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 import { formatDate, convertToMilliseconds } from './utils/index';
@@ -15,27 +15,13 @@ import styles from './app.module.css';
 const ITEMS_PER_PAGE = 10;
 const BASE_URL = 'https://hacker-news.firebaseio.com/v0';
 
-class App extends Component {
-  state = {
-    isLoading: true,
-    hasError: false,
-    stories: [],
-    allStories: []
-  };
-
-  nextStory = 0;
-
-  async componentDidMount() {
-    try {
-      const resp = await axios.get(`${BASE_URL}/newstories.json`);
-
-      this.setState({ isLoading: false, allStories: resp.data || [] });
-    } catch (error) {
-      this.setState({ isLoading: false, allStories: [], hasError: true });
-
-      console.log('Error while loading data from newstories', error);
-    }
-  }
+function App({ isOnline }) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  const [loadMore, setLoadMore] = useState(false);
+  const [stories, setStories] = useState([]);
+  const [allStories, setAllStories] = useState([]);
+  const nextStory = useRef(0);
 
   /**
    * Fetch the data for the provided id, verify that the item received is a story and
@@ -43,97 +29,118 @@ class App extends Component {
    *
    * @param {number} id - Identity of the story to be loaded.
    */
-  handleLoadStoryById = async id => {
-    this.nextStory = this.nextStory + 1;
+  const handleLoadStoryById = useCallback(id => {
+    const loadStoryById = async id => {
+      nextStory.current = nextStory.current + 1;
 
-    try {
-      const story = await axios.get(`${BASE_URL}/item/${id}.json`);
-      const stories =
-        story.data.type === 'story'
-          ? [...this.state.stories, story.data]
-          : this.state.stories;
+      try {
+        const story = await axios.get(`${BASE_URL}/item/${id}.json`);
 
-      this.setState({
-        stories
-      });
-    } catch (error) {
-      console.log(`Error while loading individual story ${id}`, error);
-    }
-  };
+        setStories(prevStories => {
+          return story.data.type === 'story'
+            ? [...prevStories, story.data]
+            : prevStories;
+        });
+      } catch (error) {
+        console.log(`Error while loading individual story ${id}`, error);
+      }
+    };
 
+    return loadStoryById(id);
+  }, []);
   /**
    * Fetch the next story from the list of stories.
    */
-  handleLoadStory = async () => {
-    const { allStories } = this.state;
-
-    await this.handleLoadStoryById(allStories[this.nextStory]);
-  };
+  const handleLoadStory = useCallback(async () => {
+    await handleLoadStoryById(allStories[nextStory.current]);
+  }, [allStories, handleLoadStoryById]);
 
   /**
    * Fetch a batch of stories from the the Hacker News API.
    */
-  handleLoadNextBatch = async () => {
-    const { allStories } = this.state;
-    const nextBatchSize = this.nextStory + ITEMS_PER_PAGE;
-    const limit =
-      nextBatchSize > allStories.length ? allStories.length : nextBatchSize;
-
-    this.setState({ isLoading: true }, async () => {
-      for (let index = this.nextStory; index < limit; index++) {
-        await this.handleLoadStoryById(allStories[index]);
-      }
-
-      this.setState({ isLoading: false });
-    });
+  const handleLoadNextBatch = () => {
+    setLoadMore(true);
   };
 
-  render() {
-    const { isLoading, stories, allStories, hasError } = this.state;
-    const { isOnline } = this.props;
+  // Initial load for all the stories
+  useEffect(() => {
+    const loadAllStories = async () => {
+      try {
+        const resp = await axios.get(`${BASE_URL}/newstories.json`);
 
-    return (
-      <Layout isOnline={isOnline}>
-        {isLoading && allStories.length === 0 ? (
-          <section className={styles.container} data-testid="loading">
-            <Loader size="large" />
-          </section>
-        ) : allStories.length === 0 && !hasError ? (
-          <section className={styles.container} data-testid="empty">
-            <EmptyView title="No stories to show at this moment." />
-          </section>
-        ) : !isLoading && hasError ? (
-          <section className={styles.container} data-testid="error">
-            <EmptyView
-              title="An error occurred while loading your data."
-              subtitle="Click here to refresh."
-              url="/"
-            />
-          </section>
-        ) : (
-          <section data-testid="resolved">
-            <InfiniteScroll
-              onLoadItem={this.handleLoadStory}
-              onLoadNext={this.handleLoadNextBatch}
-              hasMore={allStories.length !== stories.length}
-              isOnline={isOnline}
-              isLoading={isLoading && allStories.length > 0}
-            >
-              {stories.map((story, index) => (
-                <Story
-                  key={`story-${index}`}
-                  title={story.title}
-                  author={story.by}
-                  date={formatDate(new Date(convertToMilliseconds(story.time)))}
-                  url={story.url}
-                />
-              ))}
-            </InfiniteScroll>
-          </section>
-        )}
-      </Layout>
-    );
-  }
+        setIsLoading(false);
+        setAllStories(resp.data || []);
+      } catch (error) {
+        setIsLoading(false);
+        setAllStories([]);
+        setHasError(true);
+
+        console.log('Error while loading data from newstories', error);
+      }
+    };
+
+    loadAllStories();
+  }, []);
+
+  // Load a new subset of the stories.
+  useEffect(() => {
+    if (loadMore) {
+      const nextBatchSize = nextStory.current + ITEMS_PER_PAGE;
+      const limit =
+        nextBatchSize > allStories.length ? allStories.length : nextBatchSize;
+      const handleLoadMore = async () => {
+        for (let index = nextStory.current; index < limit; index++) {
+          await handleLoadStoryById(allStories[index]);
+        }
+
+        setLoadMore(false);
+      };
+
+      handleLoadMore();
+    }
+  }, [allStories, handleLoadStoryById, loadMore]);
+
+  return (
+    <Layout isOnline={isOnline}>
+      {isLoading ? (
+        <section className={styles.container} data-testid="loading">
+          <Loader size="large" />
+        </section>
+      ) : allStories.length === 0 && !hasError ? (
+        <section className={styles.container} data-testid="empty">
+          <EmptyView title="No stories to show at this moment." />
+        </section>
+      ) : !isLoading && hasError ? (
+        <section className={styles.container} data-testid="error">
+          <EmptyView
+            title="An error occurred while loading your data."
+            subtitle="Click here to refresh."
+            url="/"
+          />
+        </section>
+      ) : (
+        <section data-testid="resolved">
+          <InfiniteScroll
+            onLoadItem={handleLoadStory}
+            onLoadNext={handleLoadNextBatch}
+            hasMore={allStories.length !== stories.length}
+            isOnline={isOnline}
+            isLoading={loadMore}
+          >
+            {stories.map((story, index) => (
+              <Story
+                key={`story-${index}`}
+                title={story.title}
+                author={story.by}
+                date={formatDate(new Date(convertToMilliseconds(story.time)))}
+                url={story.url}
+              />
+            ))}
+          </InfiniteScroll>
+        </section>
+      )}
+    </Layout>
+  );
 }
 
 export default withNetworkStatus(App);
