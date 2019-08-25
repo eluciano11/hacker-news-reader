@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 import { formatDate, convertToMilliseconds } from './utils/index';
-import withNetworkStatus from './with-network-status';
+import useNetworkStatus from './use-network-status';
 import {
   InfiniteScroll,
   EmptyView,
@@ -15,12 +15,13 @@ import styles from './app.module.css';
 const ITEMS_PER_PAGE = 10;
 const BASE_URL = 'https://hacker-news.firebaseio.com/v0';
 
-function App({ isOnline }) {
+function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [loadMore, setLoadMore] = useState(false);
   const [stories, setStories] = useState([]);
   const [allStories, setAllStories] = useState([]);
+  const { isOnline } = useNetworkStatus();
   const nextStory = useRef(0);
 
   /**
@@ -143,4 +144,4 @@ function App({ isOnline }) {
   );
 }
 
-export default withNetworkStatus(App);
+export default App;
