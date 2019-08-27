@@ -1,6 +1,5 @@
 import React, { memo, useEffect, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import debounce from 'lodash.debounce';
 import throttle from 'lodash.throttle';
 
 import styles from './infinite-scroll.module.css';
@@ -19,8 +18,6 @@ const SCROLL_PERCENT = 0.75;
 
 function InfiniteScroll(props) {
   const {
-    fillPercent,
-    onLoadItem,
     isOnline,
     scrollTriggerDelay,
     scrollPercent,
@@ -49,28 +46,6 @@ function InfiniteScroll(props) {
     }, scrollTriggerDelay),
     [scrollTriggerDelay, isLoading, scrollPercent, onLoadNext, hasMore]
   );
-
-  useEffect(() => {
-    // Load each story one by one until the screen is filled.
-    const fillScreen = async () => {
-      const scrollHeight = node.current.scrollHeight;
-      const windowHeight = window.innerHeight;
-      const filledPercent = scrollHeight / windowHeight;
-
-      if (filledPercent >= fillPercent) {
-        return;
-      }
-
-      await onLoadItem();
-      fillScreen();
-    };
-    const handleResize = debounce(fillScreen, 500);
-
-    window.addEventListener('resize', handleResize);
-    fillScreen();
-
-    return () => window.removeEventListener('resize', handleResize);
-  }, [fillPercent, onLoadItem]);
 
   useEffect(() => {
     lastScroll.current = 0;
@@ -105,14 +80,10 @@ InfiniteScroll.propTypes = {
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node
   ]).isRequired,
-  // Function to load a single item.
-  onLoadItem: PropTypes.func.isRequired,
   // Function to load a batch of items.
   onLoadNext: PropTypes.func.isRequired,
   // Flag to know if we can fetch more data.
   hasMore: PropTypes.bool,
-  // Percent of the screen that wants to be filled with data.
-  fillPercent: PropTypes.number,
   // Scrolling percentage that will trigger a batch load.
   scrollPercent: PropTypes.number,
   // Delay that will be used on the scroll event.
