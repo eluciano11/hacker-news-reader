@@ -25,14 +25,6 @@ function App() {
   const { isOnline } = useNetworkStatus();
 
   /**
-   * Fetch the next story from the list of stories.
-   */
-  const handleLoadStory = useCallback(() => {
-    console.log('handle load story');
-    setNextStory(prev => prev + 1);
-  }, []);
-
-  /**
    * Fetch a batch of stories from the the Hacker News API.
    */
   const handleLoadNextBatch = () => {
